@@ -1,4 +1,4 @@
-module github.com/maxmmadden/socks/v1
+module github.com/maxmmadden/socks
 
 go 1.9
 
