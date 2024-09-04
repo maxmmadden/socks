@@ -70,16 +70,16 @@ func splitHostPort(addr string) (host string, port uint16, err error) {
 	return
 }
 
-func getAddrType(host string) byte {
+func getAddrType(host string) (byte, net.IP) {
 	addr := net.ParseIP(host)
 
 	if addr.To4() != nil {
-		return 1
+		return 1, addr.To4()
 	}
 
 	if addr.To16() != nil {
-		return 4
+		return 4, addr.To16()
 	}
 
-	return 3
+	return 3, nil
 }

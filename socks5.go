@@ -72,7 +72,7 @@ func (cfg *config) dialSocks5(targetAddr string) (_ net.Conn, err error) {
 		return nil, err
 	}
 
-	addrType := getAddrType(host)
+	addrType, ip := getAddrType(host)
 
 	req.Reset()
 	req.add(
@@ -83,8 +83,15 @@ func (cfg *config) dialSocks5(targetAddr string) (_ net.Conn, err error) {
 	)
 	if addrType == 3 {
 		req.add(byte(len(host)))
+		req.add([]byte(host)...)
 	}
-	req.add([]byte(host)...)
+	if addrType == 1 {
+		req.add(ip...)
+	}
+	if addrType == 4 {
+		req.add(ip...)
+	}
+
 	req.add(
 		byte(port>>8), // higher byte of destination port
 		byte(port),    // lower byte of destination port (big endian)
