@@ -71,14 +71,19 @@ func (cfg *config) dialSocks5(targetAddr string) (_ net.Conn, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	addrType := getAddrType(host)
+
 	req.Reset()
 	req.add(
-		5,               // version number
-		1,               // connect command
-		0,               // reserved, must be zero
-		3,               // address type, 3 means domain name
-		byte(len(host)), // address length
+		5,        // version number
+		1,        // connect command
+		0,        // reserved, must be zero
+		addrType, // address type, 3 means domain name
 	)
+	if addrType == 3 {
+		req.add(byte(len(host)))
+	}
 	req.add([]byte(host)...)
 	req.add(
 		byte(port>>8), // higher byte of destination port
